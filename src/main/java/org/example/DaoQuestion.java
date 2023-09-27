@@ -8,14 +8,46 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * The DaoQuestion class provides methods for interacting
+ * with question data in the database.
+ */
 public class DaoQuestion {
-    private PGSimpleDataSource dataSource;
 
+    /**
+     * Retrieves the PostgreSQL data source used by this DAO.
+     *
+     * @return The PostgreSQL data source.
+     */
+    public PGSimpleDataSource getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * Sets the PostgreSQL data source to be used by this DAO.
+     *
+     * @param dataSource The PostgreSQL data source to set.
+     */
+    public void setDataSource(PGSimpleDataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    /**
+     * Constructs a DaoQuestion instance with a PostgreSQL data source.
+     *
+     * @param dataSource The PostgreSQL data source to use for database connections.
+     */
     public DaoQuestion(PGSimpleDataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    /**
+     * Saves a new question and its associated responses to the database.
+     *
+     * @param question The question object to be saved.
+     * @return True if the question and responses were successfully saved;
+     * otherwise, false.
+     */
     public boolean saveQuestion(Question question) {
         try (Connection connection = dataSource.getConnection()) {
             String insertQuestionQuery = "INSERT INTO question (content, quiz_id) VALUES (?, ?)";
@@ -44,16 +76,11 @@ public class DaoQuestion {
         return false;
     }
 
-    private void saveResponse(Response response, int questionId, Connection connection) throws SQLException {
-        String insertResponseQuery = "INSERT INTO response (text, correct, question_id) VALUES (?, ?, ?)";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertResponseQuery)) {
-            preparedStatement.setString(1, response.getText());
-            preparedStatement.setBoolean(2, response.isCorrect());
-            preparedStatement.setInt(3, questionId);
-            preparedStatement.executeUpdate();
-        }
-    }
-
+    /**
+     * Updates an existing question and its associated responses in the database.
+     *
+     * @param question The question object with updated information.
+     */
     public void updateQuestion(Question question) {
         try (Connection connection = dataSource.getConnection()) {
             String updateQuestionQuery = "UPDATE question SET content = ?, quiz_id = ? WHERE id = ?";
@@ -70,20 +97,11 @@ public class DaoQuestion {
         }
     }
 
-    private void updateResponses(Question question, Connection connection) throws SQLException {
-        String deleteResponsesQuery = "DELETE FROM response WHERE question_id = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteResponsesQuery)) {
-            preparedStatement.setInt(1, question.getId());
-            preparedStatement.executeUpdate();
-
-            if (question.getResponses() != null && !question.getResponses().isEmpty()) {
-                for (Response response : question.getResponses()) {
-                    saveResponse(response, question.getId(), connection);
-                }
-            }
-        }
-    }
-
+    /**
+     * Deletes a question and its associated responses from the database.
+     *
+     * @param questionId The ID of the question to be deleted.
+     */
     public void deleteQuestion(int questionId) {
         try (Connection connection = dataSource.getConnection()) {
             // Delete the question and its associated responses
@@ -103,6 +121,12 @@ public class DaoQuestion {
         }
     }
 
+    /**
+     * Retrieves a list of questions based on the specified topic.
+     *
+     * @param topic The topic to search for.
+     * @return A list of questions matching the topic.
+     */
     public List<Question> searchQuestionByTopic(String topic) {
         List<Question> questions = new ArrayList<>();
         try (Connection connection = dataSource.getConnection()) {
@@ -129,6 +153,7 @@ public class DaoQuestion {
         return questions;
     }
 
+    private PGSimpleDataSource dataSource;
     private List<Response> getResponsesForQuestion(int questionId, Connection connection) throws SQLException {
         List<Response> responses = new ArrayList<>();
         String getResponsesQuery = "SELECT * FROM response WHERE question_id = ?";
@@ -147,11 +172,28 @@ public class DaoQuestion {
         return responses;
     }
 
-    public PGSimpleDataSource getDataSource() {
-        return dataSource;
+    private void saveResponse(Response response, int questionId, Connection connection) throws SQLException {
+        String insertResponseQuery = "INSERT INTO response (text, correct, question_id) VALUES (?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertResponseQuery)) {
+            preparedStatement.setString(1, response.getText());
+            preparedStatement.setBoolean(2, response.isCorrect());
+            preparedStatement.setInt(3, questionId);
+            preparedStatement.executeUpdate();
+        }
     }
 
-    public void setDataSource(PGSimpleDataSource dataSource) {
-        this.dataSource = dataSource;
+    private void updateResponses(Question question, Connection connection) throws SQLException {
+        String deleteResponsesQuery = "DELETE FROM response WHERE question_id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteResponsesQuery)) {
+            preparedStatement.setInt(1, question.getId());
+            preparedStatement.executeUpdate();
+
+            if (question.getResponses() != null && !question.getResponses().isEmpty()) {
+                for (Response response : question.getResponses()) {
+                    saveResponse(response, question.getId(), connection);
+                }
+            }
+        }
     }
+
 }

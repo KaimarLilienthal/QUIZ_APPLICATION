@@ -1,7 +1,11 @@
 package org.example;
 
 import java.util.List;
-
+/**
+ * The Quiz class represents a quiz within the application.
+ * It contains information about the quiz, such as its unique identifier, topic, difficulty level,
+ * and a list of questions associated with the quiz.
+ */
 public class Quiz {
     public int getId() {
         return id;

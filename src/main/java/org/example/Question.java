@@ -2,7 +2,11 @@ package org.example;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ *The Question class represents a question within the application.
+ * It contains information about the question, such as its unique identifier,
+ * content, associated quiz ID, and a list of possible responses to the question.
+ */
 public class Question {
     public int getId() {
         return id;

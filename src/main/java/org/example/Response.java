@@ -1,5 +1,10 @@
 package org.example;
-
+/**
+ * The Response class represents a possible response or answer
+ * to a question within the application. It contains information
+ * about the response, including its unique identifier,
+ * text content, and whether it is a correct answer.
+ */
 public class Response {
     public Response(String text, boolean correct) {
         this.text = text;
