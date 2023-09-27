@@ -19,6 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class DaoQuestionTest {
 
+    private DaoQuestion daoQuestion;
+    private PGSimpleDataSource dataSource;
+
     /**
      * Sets up the test environment before each test method is executed.
      */
@@ -243,8 +246,5 @@ public class DaoQuestionTest {
             e.printStackTrace();
         }
     }
-
-    private DaoQuestion daoQuestion;
-    private PGSimpleDataSource dataSource;
 
 }
