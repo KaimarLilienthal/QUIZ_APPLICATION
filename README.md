@@ -42,7 +42,7 @@
 ## Folder Structure:
 - `src`: Contains the Java source code.
 - `database`: Contains SQL scripts for database setup and reset.
-- 
+
 ## Contact:
 If you have any questions or feedback, please contact me at [kaimarlilienthal@gmail.com].
    
